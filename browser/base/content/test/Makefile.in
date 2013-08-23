@@ -335,6 +335,7 @@ MOCHITEST_BROWSER_FILES = \
                  title_test.svg \
                  video.ogg \
                  zoom_test.html \
+								 domains.txt \
                  $(NULL)
 
 # Disable tests on Windows due to frequent failures (bugs 825739, 841341)

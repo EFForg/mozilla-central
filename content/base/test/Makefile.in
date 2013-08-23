@@ -708,6 +708,7 @@ MOCHITEST_FILES_PARTS = $(foreach s,A B C,MOCHITEST_FILES_$(s))
 MOCHITEST_BROWSER_FILES = \
 		browser_bug593387.js \
 		browser_bug902350.js \
+		https_everywhere.js \
 		$(NULL)
 
 include $(topsrcdir)/config/rules.mk

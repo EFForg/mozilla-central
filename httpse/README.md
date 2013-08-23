@@ -15,11 +15,28 @@ Then configure and build mozilla-central:
     ./mach configure
     ./mach build
 
+Running the Test
+----------------
+
 To run the HTTPS Everywhere ruleset tests, first make sure you have built recently, then cd to the httpse directory and run start.sh.
 
     ./mach build
     cd httpse
     ./start.sh
+
+How It Works
+------------
+
+Important files:
+
+    httpse/start.sh                          Bash script to launch the tests
+    httpse/parse.py                          Looks through rulesets and builds lists of domains to test
+    httpse/domains/*                         Domains to test, split into files
+    httpse/https-everywhere                  Git submodule for HTTPS Everywhere
+    content/base/test/https_everywhere.js    Mochitest
+    browser/base/content/test/domains.txt    Symlink to the current domains file
+
+When you run start.sh, your https
 
 To do list
 ----------
