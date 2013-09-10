@@ -42,7 +42,7 @@ When you run start.sh, your https
 Important Notes
 ------------
 
-* When the test browsers pop up, it must be the active window on your desktop. You may need to click on the top bar to ensure this.
+* When the test browser pops up, it must be the active window on your desktop. You may need to click on the top bar to ensure this.
 
 * The test browser window may lag. It typically restores itself after a few minutes.
 
