@@ -1,13 +1,11 @@
-alert("test is starting");
-//Components.utils.import("resource://gre/modules/FileUtils.jsm");
 const gHttpTestRoot = "http://example.com/browser/browser/base/content/test/";
-const numTabs = 6;
+const numTabs = 5;
 var finished = false;
 
 var urls = [];
 
+//test function called by mochitest infrastructure
 function test() {
-  alert("testcalled")
   var i;
 
   requestLongerTimeout(5000);
@@ -18,10 +16,9 @@ function test() {
   Services.prefs.setBoolPref("security.mixed_content.block_active_content", true);
 
 
-  // load the list of domains and generate urls
+  // load the list of domains via xml request and generate urls
   var req = new XMLHttpRequest();
   req.onload = function() {
-    alert("request was loaded")
     // build urls
     var domains = this.responseText.trim().split("\n");
     for(i=0; i<domains.length; i++) {
@@ -29,16 +26,15 @@ function test() {
       if(domain != '') {
         urls.push('https://' + domain);
       }
-    alert("urls is" + urls[5])
     }
-    //urls = ['https://www.google.com/', 'https://www.eff.org/', 'https://github.com/'];
-    
+        
     // start loading all the tabs
+    window.focus
     for(i=0; i<numTabs; i++) {
       newTab();
     }
   }
-  req.open("get", gHttpTestRoot + "top-1m.csv", true); // substitute your own URL/CSV here
+  req.open("get", gHttpTestRoot + "domains.txt", true); // substitute your own URL/CSV here
   req.send();
   
   /* FOR OBTAINING RULESETS from a FIREFOX EXTENSION
@@ -51,32 +47,26 @@ function test() {
   }*/
 }
 
-
 function newTab() {
-    alert("newtab called")
   // start a test in this tab
   if(urls.length) {
+    
     // open a new tab
     var url = urls.pop();
     popup('loading url '+url+' ('+urls.length+' left)');
     var tab = gBrowser.addTab(url);
     gBrowser.selectedTab = tab;
-    //gBrowser.selectedBrowser.contentWindow.location = url;
-    
     
     // wait for the page to load
     var intervalId = window.setTimeout(function(){
 
-    
       // detect mixed content blocker
       if(PopupNotifications.getNotification("mixed-content-blocked", gBrowser.getBrowserForTab(tab))) {
         ok(false, "URL caused mixed content: "+ url);
 
         writeout(url);
         // todo: print this in the live window
-        // and also save it to a file
       }
-      
       
       // close this tab, and open another
       closeTab(tab);
@@ -84,6 +74,8 @@ function newTab() {
     }, 6000);
 
   } else {
+  
+    //to run if urls is empty
     if (!finished) { 
       finished = true;
       window.setTimeout(function(){
@@ -94,13 +86,14 @@ function newTab() {
   }
 }
 
-
+//closes tab
 function closeTab(tab) {
   gBrowser.selectedTab = tab;
   gBrowser.removeCurrentTab();
   newTab();
 }
 
+//function to create alerts without interrupting test
 function popup(text) {
   try {
     Components.classes['@mozilla.org/alerts-service;1'].
@@ -111,35 +104,39 @@ function popup(text) {
   }
 }
 
+//manages write out of output mochilog.txt, which contains sites that trigger mcb
 function writeout(weburl) {
 
-  var file = Components.classes["@mozilla.org/file/local;1"].
-           createInstance(Components.interfaces.nsILocalFile);
-  file.initWithPath("/Users/lisayao/Desktop");
-  
+  //initialize file
+  var file = Components.classes["@mozilla.org/file/directory_service;1"].
+           getService(Components.interfaces.nsIProperties).
+           get("Home", Components.interfaces.nsIFile);
   writeoutfile = "mochilog.txt";
   file.append(writeoutfile);
+  alert(file.path);
  
-  //need to be sure to delete existing mochilog.txt before running test
+  //create file if it does not already exist
   if(!file.exists()) {
     file.create(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 420);
   } 
   
+  //initialize output stream
   var stream = Components.classes["@mozilla.org/network/file-output-stream;1"]
   .createInstance(Components.interfaces.nsIFileOutputStream);
   
-  //double check permissions, perhaps use 0x02 | 0x10 only
+  //permissions are set to append (will not delete existing contents)
   stream.init(file, 0x02 | 0x08 | 0x10, 0666, 0);
   
   var content = weburl + "\n";
   
-  //used to deal with ascii text
+  //Deal with ascii text and write out
   var converter = Components.classes["@mozilla.org/intl/converter-output-stream;1"].
                 createInstance(Components.interfaces.nsIConverterOutputStream);
   converter.init(stream, "UTF-8", 0, 0);
   converter.writeString(content);
   converter.close();
 
+  //alternative write out if ascii is not a concern
   //stream.write(content,content.length);
   //stream.close();
 
