@@ -38,18 +38,19 @@ Important files:
 
 When you run start.sh, your https
 
+
 Important Notes
 ------------
 
-When the test browsers pop up, it must be the active window on your desktop. You may need to click on the top bar to ensure this.
+* When the test browsers pop up, it must be the active window on your desktop. You may need to click on the top bar to ensure this.
 
-The test browser window may lag. It typically restores itself after a few minutes.
+* The test browser window may lag. It typically restores itself after a few minutes.
 
-URLs that trigger mixed content blocking will be saved in a file named "mochilog.txt" located in the httpse folder.
+* URLs that trigger mixed content blocking will be saved in a file named "mochilog.txt" located in the httpse folder.
 
-You may change the number of urls tested in run in the bash script by modifying the variable: URLS_PER_RUN
+* You may change the number of urls tested in run in the bash script by modifying the variable: URLS_PER_RUN
 
-You may change the desired number of tabs to run tests simultaneously in browser_https_everywhere.js by modifying the variable: numTabs. 5-7 tabs have run smoothly during our trial runs.
+* You may change the desired number of tabs to run tests simultaneously in browser_https_everywhere.js by modifying the variable: numTabs. 5-7 tabs have run smoothly during our trial runs.
 
 
  
