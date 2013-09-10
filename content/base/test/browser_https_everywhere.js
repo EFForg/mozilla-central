@@ -53,7 +53,6 @@ function newTab() {
     
     // open a new tab
     var url = urls.pop();
-    popup('loading url '+url+' ('+urls.length+' left)');
     var tab = gBrowser.addTab(url);
     gBrowser.selectedTab = tab;
     
@@ -71,7 +70,7 @@ function newTab() {
       // close this tab, and open another
       closeTab(tab);
 
-    }, 6000);
+    }, 10000);
 
   } else {
   
@@ -79,7 +78,6 @@ function newTab() {
     if (!finished) { 
       finished = true;
       window.setTimeout(function(){
-        popup('running finish');
         finish();
       }, 10000);
     }
