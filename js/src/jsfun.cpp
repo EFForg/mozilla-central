@@ -272,8 +272,9 @@ js::fun_resolve(JSContext *cx, HandleObject obj, HandleId id, unsigned flags,
         if (JSID_IS_ATOM(id, cx->names().length)) {
             if (fun->isInterpretedLazy() && !fun->getOrCreateScript(cx))
                 return false;
-            uint16_t ndefaults = fun->hasScript() ? fun->nonLazyScript()->ndefaults : 0;
-            v.setInt32(fun->nargs - ndefaults - fun->hasRest());
+            uint16_t length = fun->hasScript() ? fun->nonLazyScript()->funLength :
+                fun->nargs - fun->hasRest();
+            v.setInt32(length);
         } else {
             v.setString(fun->atom() == NULL ?  cx->runtime()->emptyString : fun->atom());
         }
@@ -526,6 +527,7 @@ FindBody(JSContext *cx, HandleFunction fun, StableCharPtr chars, size_t length,
     do {
         switch (ts.getToken()) {
           case TOK_NAME:
+          case TOK_YIELD:
             if (nest == 0)
                 onward = false;
             break;
@@ -1228,14 +1230,7 @@ fun_isGenerator(JSContext *cx, unsigned argc, Value *vp)
         return true;
     }
 
-    bool result = false;
-    if (fun->hasScript()) {
-        JSScript *script = fun->nonLazyScript();
-        JS_ASSERT(script->length != 0);
-        result = script->isGenerator;
-    }
-
-    JS_SET_RVAL(cx, vp, BooleanValue(result));
+    JS_SET_RVAL(cx, vp, BooleanValue(fun->isGenerator()));
     return true;
 }
 
@@ -1456,10 +1451,15 @@ js::Function(JSContext *cx, unsigned argc, Value *vp)
                     return false;
                 }
 
+                if (tt == TOK_YIELD && ts.versionNumber() < JSVERSION_1_7)
+                    tt = TOK_NAME;
+
                 if (tt != TOK_NAME) {
                     if (tt == TOK_TRIPLEDOT) {
                         hasRest = true;
                         tt = ts.getToken();
+                        if (tt == TOK_YIELD && ts.versionNumber() < JSVERSION_1_7)
+                            tt = TOK_NAME;
                         if (tt != TOK_NAME) {
                             if (tt != TOK_ERROR)
                                 ts.reportError(JSMSG_NO_REST_NAME);
@@ -1470,7 +1470,7 @@ js::Function(JSContext *cx, unsigned argc, Value *vp)
                     }
                 }
 
-                if (!formals.append(ts.currentToken().name()))
+                if (!formals.append(ts.currentName()))
                     return false;
 
                 /*
