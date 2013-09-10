@@ -1,10 +1,34 @@
-#!/bin/sh
+#!/bin/bash
+echo Mochiscript has begun...
 
-echo 'Coming soon'
+#setting path variables
+DOMAIN_PATH="browser/base/content/test/domains.txt"
+HTTPSE_PATH=`pwd`
+cd ..
+MOZCENTRAL_PATH=`pwd`
 
-# parse https everywhere rules, saving chunks into httpse/domains/1, 2, 3, etc.
+#remove existing domain files and obtain new domains using parser
+cd $HTTPSE_PATH
+rm domains/*
+python parse.py https-everywhere 500 domains
 
-# for each chunk:
-#   ln -s domains/1 browser/base/content/test/httpse-domains.csv
-#   run mochitest
+#remove existing output file
+rm mochilog.txt
 
+#grab individual domain files
+cd  domains 
+DOMAINFILES=$( ls )
+
+#for each list of URLs, move content to read-in file and launch mochitest
+cd $MOZCENTRAL_PATH
+for i in $DOMAINFILES; do
+    echo $i        
+    rm $DOMAIN_PATH 
+    ln -s $HTTPSE_PATH/domains/$i $MOZCENTRAL_PATH/$DOMAIN_PATH
+    ./mach mochitest-browser content/base/test/browser_https_everywhere.js
+done
+
+#move output file from home directory to "httpse"
+mv ~/mochilog.txt ./httpse
+
+echo Mochiscript is completed.
