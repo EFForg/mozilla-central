@@ -6,11 +6,16 @@ This repository is a clone of mozilla-central, the codebase that Firefox is buil
 Getting Started
 ---------------
 
-After cloning this report, the first thing you need to do is build mozilla-central. Go to the root directory of the reposity and run this to install dependencies:
+After cloning this repo, make sure the HTTPS Everywhere submodule is updated:
+
+    git submodule init
+    git submodule update
+
+Then you need to build mozilla-central. Run this to install dependencies:
 
     ./mach bootstrap
 
-Then configure and build mozilla-central:
+Then configure and build mozilla-central (this might take a really long time):
 
     ./mach configure
     ./mach build
