@@ -8,9 +8,10 @@ cd ..
 MOZCENTRAL_PATH=`pwd`
 
 #remove existing domain files and obtain new domains using parser
+URLS_PER_RUN=500
 cd $HTTPSE_PATH
 rm domains/*
-python parse.py https-everywhere 500 domains
+python parse.py https-everywhere $URLS_PER_RUN domains
 
 #remove existing output file
 rm mochilog.txt
