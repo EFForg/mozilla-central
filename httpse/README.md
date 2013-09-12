@@ -38,10 +38,9 @@ Important files:
     httpse/parse.py                          Looks through rulesets and builds lists of domains to test
     httpse/domains/*                         Domains to test, split into files
     httpse/https-everywhere                  Git submodule for HTTPS Everywhere
+    httpse/update_rulesets.py                Assigns proper "mixedcontent" tag to rulesets
     content/base/test/browser_https_everywhere.js    Mochitest
     browser/base/content/test/domains.txt    Symlink to the current domains file
-
-When you run start.sh, your https
 
 
 Important Notes
@@ -66,6 +65,6 @@ To do list
 * Write script that parses HTTPS Everywhere rules for domain names to test, and writes this domain names in a location that the mochitest can read them (done)
 * Write the mochitest (done)
 * Create bash script that git pulls the HTTPS Everywhere repo, generates the domain name files, and runs the mochitest (partway done)
-* Write a script to remove tags from rulesets that no longer cause mixed content situations
+* Write a script to remove tags from rulesets that no longer cause mixed content situations (done)
 * Ensure build works with httpse folder and file modifications present. If not, fix by setting ignores in compiler.
 * Update submodule

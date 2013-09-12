@@ -2,8 +2,9 @@
 # This script pulls all target urls from HTTPS-Everywhere Rulesets. 
 # It does not print any domain names containing *, any containing "www." 
 # (which is taken care of by the mochitest), and all rulesets that 
-# are already deactivated by designation as "default_off" or
-# mixed content
+# are already deactivated by designation as "default_off".
+# The test can be configured to also ignore rulesets already tagged 
+# as "mixedcontent".
 
 import xml.parsers.expat
 import glob
@@ -22,7 +23,6 @@ class HTTPSERuleParser:
 			return
 
 		root = os.getcwd()
-		print root
 		
 		#changes directory to user input
 		os.chdir(rules_dir)
@@ -51,6 +51,7 @@ class HTTPSERuleParser:
 			if domain not in deduped_domains:
 				deduped_domains.append(domain)
 		deduped_domains.sort()	
+		print "There are " + str(len(deduped_domains)) + " domains to test"
 
 		index = 1
 		filenum = 1
@@ -62,7 +63,6 @@ class HTTPSERuleParser:
 			os.makedirs(urls_path)
 			
 		os.chdir(urls_path)	
-		print urls_path
  
 		filename = 'top' + str(filenum) + 'pizza.csv'
 		f = open(filename, 'w')
@@ -97,7 +97,8 @@ class HTTPSERuleParser:
 				if key == "default_off":
 					self.disabled_by_default = True
 				elif (key == "platform") and ('mixedcontent' in value):
-					self.disabled_by_default = True
+					self.disabled_by_default = False 
+					#set above to True to ignore rulesets marked as mixedcontent
 	
 		if name == "target":
 			# print 'Start element:', name, attrs
@@ -113,7 +114,6 @@ if __name__ == '__main__':
 		sys.exit()
 
 	httpse_dir = sys.argv[1]
-	#urls_path = '/Users/lisayao/Desktop/Github/HTTPS-E-Mixed-Content-Work/urls'
 	urlsperfile = float(sys.argv[2])
 	urls_path = sys.argv[3]
 	HTTPSERuleParser(httpse_dir, urls_path, urlsperfile);
