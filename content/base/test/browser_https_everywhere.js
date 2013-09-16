@@ -111,7 +111,6 @@ function writeout(weburl) {
            get("Home", Components.interfaces.nsIFile);
   writeoutfile = "mochilog.txt";
   file.append(writeoutfile);
-  alert(file.path);
  
   //create file if it does not already exist
   if(!file.exists()) {
