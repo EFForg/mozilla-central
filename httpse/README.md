@@ -11,6 +11,10 @@ After cloning this repo, make sure the HTTPS Everywhere submodule is updated:
     git submodule init
     git submodule update
 
+Next you need to make a temporary file:
+
+    echo eff.org > browser/base/content/test/domains.txt
+
 Then you need to build mozilla-central. Run this to install dependencies:
 
     ./mach bootstrap
